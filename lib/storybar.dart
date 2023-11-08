@@ -43,7 +43,7 @@ void initState() {
                 child: Column(
                   children: [
                     Text(stories[index].text),
-                    StoryCircle()
+                    StoryCircle(seen: false,)
                   ],
                 ),
               );
@@ -59,5 +59,5 @@ class Story {
   bool? seen;
   String text;
 
-Story({this.seen,this.text='default value'});
+Story({this.seen,this.text='de'});
 }
