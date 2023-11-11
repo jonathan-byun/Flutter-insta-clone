@@ -161,24 +161,40 @@ class _LoginFormState extends State<LoginForm> {
          const Logintext(),
          EmailField(textEditingController: _userEmailController),
          PasswordField(textEditingController: _userPasswordController),
-         Container(
-          margin: EdgeInsets.symmetric(vertical: 5),
-          width: 320,
-           child: Align(
-            alignment: Alignment(.8,.9),
-            child: GestureDetector(
-              onTap: () {
-                Navigator.pushNamed(context, '/home');
-              },
-              child: Text(
-                'Forgot password?',
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(color:Colors.white),
-              ),
-            ),
-           ),
-         )
+         ForgotPasswordButton(),
+         ElevatedButton(
+          onPressed: (){},
+          child:Text('Login')
+          )
+
        ],
                 ),
+    );
+  }
+}
+
+class ForgotPasswordButton extends StatelessWidget {
+  const ForgotPasswordButton({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+     margin: EdgeInsets.symmetric(vertical: 5),
+     width: 320,
+      child: Align(
+       alignment: Alignment(.8,.9),
+       child: GestureDetector(
+         onTap: () {
+           Navigator.pushNamed(context, '/home');
+         },
+         child: Text(
+           'Forgot password?',
+           style: Theme.of(context).textTheme.labelSmall?.copyWith(color:Colors.white),
+         ),
+       ),
+      ),
     );
   }
 }
