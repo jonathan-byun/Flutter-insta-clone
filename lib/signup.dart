@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_1/auth.dart';
 import 'package:flutter_1/email_and_pass.dart';
 import 'text_and_space.dart';
 
@@ -34,40 +35,34 @@ class SignUpForm extends StatefulWidget {
 }
 
 class _SignUpFormState extends State<SignUpForm> {
-  String _emailError = '';
-  String _passwordError = '';
   final double formWidth = 320;
   final _signUpKey = GlobalKey<FormState>();
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
+  String? emailError;
+  String? passwordError;
 
-  Future<void> registerUser() async {
-    setState(() {
-        _emailError = '';
-        _passwordError = '';
+
+void handleError(errorMessage) {
+    if (errorMessage.toLowerCase().contains('password')) {
+      setState(() {
+        passwordError = errorMessage;
       });
-    if (_signUpKey.currentState!.validate()) {
-      try {
-        UserCredential userCredential = await FirebaseAuth.instance
-            .createUserWithEmailAndPassword(
-                email: _emailController.text,
-                password: _passwordController.text);
-      } on FirebaseAuthException catch (e) {
-        if (e.code == 'weak-password') {
-          setState(() {
-            _passwordError = 'Password is too weak';
-          });
-          ;
-        } else if (e.code == 'email-already-in-use') {
-          setState(() {
-            _emailError = 'This Email is already in use';
-          });
-        }
-      } catch (e) {
-        setState(() {
-          _emailError = 'Log in failed. Please try again later';
-        });
-      }
+    } else {
+      setState(() {
+        emailError = errorMessage;
+      });
+    }
+  }
+
+  void registerUser() async{
+    setState(() {
+      emailError=null;
+      passwordError=null;
+    });
+    String? errorMessage = await AuthService().createUserWithEmailAndPassword(email: _emailController.text, password: _passwordController.text,);
+    if (errorMessage!=null) {
+      handleError(errorMessage.toString());
     }
   }
 
@@ -90,17 +85,13 @@ class _SignUpFormState extends State<SignUpForm> {
               const Logintext(),
               const FillerSpace(height: 30),
               EmailField(
-                textEditingController: _emailController,
+                textEditingController: _emailController,error: emailError,
               ),
-              Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [ErrorText(signupError: _emailError)]),
+              
               PasswordField(
-                textEditingController: _passwordController,
+                textEditingController: _passwordController, error: passwordError,
               ),
-              Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [ErrorText(signupError: _passwordError)]),
+
               FormSubmitButton(
                   formKey: _signUpKey, text: 'Sign Up', callback: registerUser)
             ],

@@ -32,8 +32,9 @@ class ForgotPasswordButton extends StatelessWidget {
 
 class EmailField extends StatelessWidget {
   final TextEditingController textEditingController;
+  final String? error;
   const EmailField(
-      {super.key, required this.textEditingController});
+      {super.key, required this.textEditingController,this.error});
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +46,7 @@ class EmailField extends StatelessWidget {
             hintText: 'Email',
             filled: true,
             fillColor: Colors.white,
+            errorText: error,
             contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 10)),
             validator: (value) {
               if (value==null|| value.isEmpty) {
@@ -59,8 +61,9 @@ class EmailField extends StatelessWidget {
 
 class PasswordField extends StatelessWidget {
   final TextEditingController textEditingController;
+  final String? error;
   const PasswordField(
-      {super.key, required this.textEditingController});
+      {super.key, required this.textEditingController,this.error});
 
   @override
   Widget build(BuildContext context) {
@@ -72,6 +75,7 @@ class PasswordField extends StatelessWidget {
             hintText: 'Password',
             filled: true,
             fillColor: Colors.white,
+            errorText: error,
             contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 10)),
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -86,7 +90,7 @@ class PasswordField extends StatelessWidget {
 
 class FormSubmitButton extends StatelessWidget {
   final String text;
-  final AsyncCallback callback;
+  final VoidCallback callback;
   const FormSubmitButton({
     super.key,
     required GlobalKey<FormState> formKey,
@@ -95,6 +99,12 @@ class FormSubmitButton extends StatelessWidget {
   }) : _formKey = formKey;
 
   final GlobalKey<FormState> _formKey;
+
+  void handlePress() {
+    if (_formKey.currentState!.validate()){
+      callback();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -105,7 +115,7 @@ class FormSubmitButton extends StatelessWidget {
             fixedSize: Size(320, 30),
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))),
-        onPressed: callback,
+        onPressed: handlePress,
         // () {
         //   if (_formKey.currentState!.validate()) {callback;}
         // },

@@ -7,18 +7,26 @@ class AuthService {
     return _auth.currentUser;
   }
 
-  Future<User?> signInWithEmailAndPassword(
-      {required String email, required String password}) async {
+  Future<String?> signInWithEmailAndPassword({
+    required String email,
+    required String password,
+  }) async {
     try {
-      final UserCredential authResult = await _auth.signInWithEmailAndPassword(
-          email: email, password: password);
-           return authResult.user;
+      await _auth.signInWithEmailAndPassword(email: email, password: password);
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        print('no user found');
-      } else if (e.code == 'wrong-password') {
-        print('wrong password');
-      }
+      return e.message;
+    }
+  }
+
+  Future<String?> createUserWithEmailAndPassword({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(email: email, password: password);
+    } on FirebaseAuthException catch (e) {
+      return e.message;
     }
   }
 

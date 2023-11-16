@@ -11,8 +11,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'text_and_space.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -75,10 +73,10 @@ class _MyAppState extends State<MyApp> {
         '/home': (BuildContext context) => const MyHomePage(title: 'Home Page'),
         '/signup': (BuildContext context) => SignUpPage()
       },
-      home:StreamBuilder<User?>(
+      home: StreamBuilder<User?>(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
-          if(snapshot.hasData) {
+          if (snapshot.hasData) {
             return MyHomePage(title: 'Home Page');
           } else {
             return LoginPage();
@@ -104,7 +102,7 @@ class LoginPage extends StatelessWidget {
         child: const SizedBox.expand(
           child: Stack(
             children: [
-              GradientBackdrop(),LoginForm()
+              GradientBackdrop(), LoginForm()
               // Positioned(top: 120, left: 10, right: 10, child: LoginForm()),
             ],
           ),
@@ -127,6 +125,34 @@ class _LoginFormState extends State<LoginForm> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController _userEmailController = TextEditingController();
   TextEditingController _userPasswordController = TextEditingController();
+  String? emailError;
+  String? passwordError;
+
+  void handleError(errorMessage) {
+    if (errorMessage.contains('password')) {
+      setState(() {
+        passwordError = errorMessage;
+      });
+    } else {
+      setState(() {
+        emailError = errorMessage;
+      });
+    }
+  }
+
+  handleSubmit() async {
+    setState(() {
+      emailError = null;
+      passwordError = null;
+    });
+    String? errorMessage = await AuthService().signInWithEmailAndPassword(
+        email: _userEmailController.text,
+        password: _userPasswordController.text);
+        if (errorMessage!=null) {
+          handleError(errorMessage);
+        }
+  }
+
   @override
   void dispose() {
     _userEmailController.dispose();
@@ -146,27 +172,41 @@ class _LoginFormState extends State<LoginForm> {
             children: [
               const Logintext(),
               FillerSpace(height: 30),
-              EmailField(textEditingController: _userEmailController,),
-              PasswordField(textEditingController: _userPasswordController,),
+              EmailField(
+                textEditingController: _userEmailController,
+                error: emailError,
+              ),
+              PasswordField(
+                textEditingController: _userPasswordController,
+                error: passwordError,
+              ),
               ForgotPasswordButton(),
               FillerSpace(height: 20),
-              FormSubmitButton(formKey: _formKey, text: 'Log In',callback:  (() => AuthService().signInWithEmailAndPassword(email: _userEmailController.text, password: _userPasswordController.text))),
+              FormSubmitButton(
+                  formKey: _formKey,
+                  text: 'Log In',
+                  callback: (handleSubmit)),
               FillerSpace(height: 20),
-              OrDivider(width: formWidth,),
+              OrDivider(
+                width: formWidth,
+              ),
               FillerSpace(height: 30),
               const FaceBookLogIn(),
               FillerSpace(height: 180),
-              const Divider(thickness: .5,),
+              const Divider(
+                thickness: .5,
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text("Don't have an account?"),
-                  TextButton(onPressed: (){
-                    Navigator.pushNamed(context, '/signup');
-                  }, child: Text('Sign Up'))
+                  TextButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/signup');
+                      },
+                      child: Text('Sign Up'))
                 ],
               )
-        
             ],
           ),
         ),
@@ -195,7 +235,3 @@ class FaceBookLogIn extends StatelessWidget {
     );
   }
 }
-
-
-
-
