@@ -12,7 +12,7 @@ const StoryBar({Key? key}): super(key: key);
 
 class _StoryBarState extends State<StoryBar> {
 
-List <Story>unseenStories=[Story(seen:true),Story(seen:true),Story(seen:true),Story(seen:true),Story(seen:true),Story(seen:true)];
+List <Story>unseenStories=[Story(seen:true),Story(seen:false),Story(seen:true),Story(seen:false),Story(seen:true),Story(seen:true)];
 List <Story>seenStories=[];
 List <Story>stories=[];
 
@@ -43,7 +43,7 @@ void initState() {
                 child: Column(
                   children: [
                     Text(stories[index].text),
-                    StoryCircle(seen: false,)
+                    StoryCircle(seen: stories[index].seen,)
                   ],
                 ),
               );
@@ -56,8 +56,8 @@ void initState() {
 }
 
 class Story {
-  bool? seen;
+  bool seen;
   String text;
 
-Story({this.seen,this.text='de'});
+Story({required this.seen,this.text='de'});
 }

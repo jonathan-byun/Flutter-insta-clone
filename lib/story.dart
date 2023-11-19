@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class StoryCircle extends StatelessWidget {
-  final bool seen;
+  bool seen;
   StoryCircle({Key? key, image,required this.seen}) : super(key: key);
 
   @override
