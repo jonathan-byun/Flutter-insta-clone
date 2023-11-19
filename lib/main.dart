@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_1/auth.dart';
@@ -204,7 +205,7 @@ class _LoginFormState extends State<LoginForm> {
                       onPressed: () {
                         Navigator.pushNamed(context, '/signup');
                       },
-                      child: Text('Sign Up'))
+                      child: Text('Sign Up', style: TextStyle(fontWeight: FontWeight.bold)))
                 ],
               )
             ],

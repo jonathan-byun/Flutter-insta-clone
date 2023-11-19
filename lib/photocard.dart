@@ -36,6 +36,7 @@ class _photoCardState extends State<photoCard> {
             setIndex: setIndex,
           ),
           Row(
+            
             children: [
               Row(
                 children: [
@@ -50,9 +51,12 @@ class _photoCardState extends State<photoCard> {
                       icon: const FaIcon(FontAwesomeIcons.share))
                 ],
               ),
+              Spacer(),
               Row(
                 children: indicators(widget.images.length, currentIndex),
-              )
+              ),
+              Spacer(flex: 3,),
+              IconButton(onPressed: (){}, icon: FaIcon(FontAwesomeIcons.ribbon))
             ],
           )
         ],

@@ -12,7 +12,7 @@ const StoryBar({Key? key}): super(key: key);
 
 class _StoryBarState extends State<StoryBar> {
 
-List <Story>unseenStories=[Story(seen:true),Story(seen:false),Story(seen:true),Story(seen:false),Story(seen:true),Story(seen:true)];
+List <Story>unseenStories=[Story(seen:true),Story(seen:true)];
 List <Story>seenStories=[];
 List <Story>stories=[];
 

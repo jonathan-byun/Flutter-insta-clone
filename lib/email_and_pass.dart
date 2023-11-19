@@ -34,7 +34,7 @@ class EmailField extends StatelessWidget {
   final TextEditingController textEditingController;
   final String? error;
   const EmailField(
-      {super.key, required this.textEditingController,this.error});
+      {super.key, required this.textEditingController, this.error});
 
   @override
   Widget build(BuildContext context) {
@@ -42,18 +42,19 @@ class EmailField extends StatelessWidget {
       margin: EdgeInsets.symmetric(vertical: 5),
       child: TextFormField(
         controller: textEditingController,
+        keyboardType: TextInputType.emailAddress,
         decoration: InputDecoration(
             hintText: 'Email',
             filled: true,
             fillColor: Colors.white,
             errorText: error,
             contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 10)),
-            validator: (value) {
-              if (value==null|| value.isEmpty) {
-                return 'Please enter some text';
-              }
-              return null;
-            },
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please enter some text';
+          }
+          return null;
+        },
       ),
     );
   }
@@ -63,26 +64,32 @@ class PasswordField extends StatelessWidget {
   final TextEditingController textEditingController;
   final String? error;
   const PasswordField(
-      {super.key, required this.textEditingController,this.error});
+      {super.key, required this.textEditingController, this.error});
 
   @override
   Widget build(BuildContext context) {
+    final inputBorder =
+        OutlineInputBorder(borderSide: Divider.createBorderSide(context));
     return Container(
       margin: EdgeInsets.symmetric(vertical: 5),
       child: TextFormField(
         controller: textEditingController,
+        obscureText: true,
+        keyboardType: TextInputType.text,
         decoration: InputDecoration(
             hintText: 'Password',
             filled: true,
             fillColor: Colors.white,
             errorText: error,
+            focusedBorder: inputBorder,
+            enabledBorder: inputBorder,
             contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 10)),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter some text';
-              }
-              return null;
-            },
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please enter some text';
+          }
+          return null;
+        },
       ),
     );
   }
@@ -91,17 +98,17 @@ class PasswordField extends StatelessWidget {
 class FormSubmitButton extends StatelessWidget {
   final String text;
   final VoidCallback callback;
-  const FormSubmitButton({
-    super.key,
-    required GlobalKey<FormState> formKey,
-    required this.text,
-    required this.callback
-  }) : _formKey = formKey;
+  const FormSubmitButton(
+      {super.key,
+      required GlobalKey<FormState> formKey,
+      required this.text,
+      required this.callback})
+      : _formKey = formKey;
 
   final GlobalKey<FormState> _formKey;
 
   void handlePress() {
-    if (_formKey.currentState!.validate()){
+    if (_formKey.currentState!.validate()) {
       callback();
     }
   }
