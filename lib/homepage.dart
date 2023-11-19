@@ -41,7 +41,10 @@ class _MyHomePageState extends State<MyHomePage> {
             SliverList.builder(
               itemCount: 1,
               itemBuilder: (BuildContext context, int index) {
-                return photoCard();
+                return photoCard(images: [
+              'https://as1.ftcdn.net/v2/jpg/01/64/39/38/1000_F_164393848_zicOt3rQZDL5TaUCMUombhF8MHH5hRiW.jpg',
+              'https://as1.ftcdn.net/v2/jpg/01/64/39/38/1000_F_164393848_zicOt3rQZDL5TaUCMUombhF8MHH5hRiW.jpg',
+            ],);
               }
               ),
           ]),
