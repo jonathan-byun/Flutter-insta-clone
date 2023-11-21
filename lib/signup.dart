@@ -1,9 +1,5 @@
-import 'dart:io';
-import 'dart:math';
-
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_1/auth.dart';
+import 'package:flutter_1/resources/auth.dart';
 import 'package:flutter_1/email_and_pass.dart';
 import 'text_and_space.dart';
 
@@ -42,8 +38,7 @@ class _SignUpFormState extends State<SignUpForm> {
   String? emailError;
   String? passwordError;
 
-
-void handleError(errorMessage) {
+  void handleError(errorMessage) {
     if (errorMessage.toLowerCase().contains('password')) {
       setState(() {
         passwordError = errorMessage;
@@ -55,13 +50,16 @@ void handleError(errorMessage) {
     }
   }
 
-  void registerUser() async{
+  void registerUser() async {
     setState(() {
-      emailError=null;
-      passwordError=null;
+      emailError = null;
+      passwordError = null;
     });
-    String? errorMessage = await AuthService().createUserWithEmailAndPassword(email: _emailController.text, password: _passwordController.text,);
-    if (errorMessage!=null) {
+    String? errorMessage = await AuthService().createUserWithEmailAndPassword(
+      email: _emailController.text,
+      password: _passwordController.text,
+    );
+    if (errorMessage != null) {
       handleError(errorMessage.toString());
     }
   }
@@ -85,13 +83,13 @@ void handleError(errorMessage) {
               const Logintext(),
               const FillerSpace(height: 30),
               EmailField(
-                textEditingController: _emailController,error: emailError,
+                textEditingController: _emailController,
+                error: emailError,
               ),
-              
               PasswordField(
-                textEditingController: _passwordController, error: passwordError,
+                textEditingController: _passwordController,
+                error: passwordError,
               ),
-
               FormSubmitButton(
                   formKey: _signUpKey, text: 'Sign Up', callback: registerUser)
             ],

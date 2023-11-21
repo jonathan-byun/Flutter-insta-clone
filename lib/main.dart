@@ -1,7 +1,5 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_1/auth.dart';
+import 'package:flutter_1/resources/auth.dart';
 import 'package:flutter_1/email_and_pass.dart';
 import 'package:flutter_1/homepage.dart';
 import 'package:flutter_1/signup.dart';
@@ -28,27 +26,11 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a blue toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         textTheme: TextTheme(
             displayLarge: TextStyle(
@@ -67,6 +49,7 @@ class _MyAppState extends State<MyApp> {
             borderSide: BorderSide.none,
           ),
         ),
+        iconTheme: IconThemeData(color: Colors.white),
         useMaterial3: true,
       ),
       routes: <String, WidgetBuilder>{
@@ -122,6 +105,7 @@ class LoginForm extends StatefulWidget {
 }
 
 class _LoginFormState extends State<LoginForm> {
+  bool isLoading = false;
   final double formWidth = 320;
   final _formKey = GlobalKey<FormState>();
   TextEditingController _userEmailController = TextEditingController();
@@ -145,13 +129,17 @@ class _LoginFormState extends State<LoginForm> {
     setState(() {
       emailError = null;
       passwordError = null;
+      isLoading = true;
     });
     String? errorMessage = await AuthService().signInWithEmailAndPassword(
         email: _userEmailController.text,
         password: _userPasswordController.text);
-        if (errorMessage!=null) {
-          handleError(errorMessage);
-        }
+    if (errorMessage != null || errorMessage != 'Success') {
+      handleError(errorMessage);
+    }
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
@@ -183,10 +171,8 @@ class _LoginFormState extends State<LoginForm> {
               ),
               ForgotPasswordButton(),
               FillerSpace(height: 20),
-              FormSubmitButton(
-                  formKey: _formKey,
-                  text: 'Log In',
-                  callback: (handleSubmit)),
+              isLoading ? Center(child: CircularProgressIndicator(),): FormSubmitButton(
+                  formKey: _formKey, text: 'Log In', callback: (handleSubmit)),
               FillerSpace(height: 20),
               OrDivider(
                 width: formWidth,
@@ -205,7 +191,8 @@ class _LoginFormState extends State<LoginForm> {
                       onPressed: () {
                         Navigator.pushNamed(context, '/signup');
                       },
-                      child: Text('Sign Up', style: TextStyle(fontWeight: FontWeight.bold)))
+                      child: Text('Sign Up',
+                          style: TextStyle(fontWeight: FontWeight.bold)))
                 ],
               )
             ],

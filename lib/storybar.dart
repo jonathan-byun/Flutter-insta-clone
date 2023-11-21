@@ -2,48 +2,46 @@ import 'package:flutter/material.dart';
 import 'package:flutter_1/story.dart';
 export 'package:flutter_1/storybar.dart';
 
-
 class StoryBar extends StatefulWidget {
-const StoryBar({Key? key}): super(key: key);
+  const StoryBar({Key? key}) : super(key: key);
 
   @override
   State<StoryBar> createState() => _StoryBarState();
 }
 
 class _StoryBarState extends State<StoryBar> {
+  List<Story> unseenStories = [Story(seen: false), Story(seen: true),Story(seen: false), Story(seen: true),Story(seen: false), Story(seen: true)];
+  List<Story> seenStories = [];
+  List<Story> stories = [];
 
-List <Story>unseenStories=[Story(seen:true),Story(seen:true)];
-List <Story>seenStories=[];
-List <Story>stories=[];
+  @override
+  void initState() {
+    super.initState();
 
-@override
-void initState() {
-  super.initState();
+    stories = [...unseenStories, ...seenStories];
+  }
 
-  stories = [...unseenStories,...seenStories];
-}
-@override
+  @override
   Widget build(BuildContext context) {
     return SliverToBoxAdapter(
       child: SizedBox(
-        height: 100,
+        height: 110,
         width: double.infinity,
         child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: Theme.of(context).primaryColor
-          ),
+          decoration: BoxDecoration(color: Colors.black),
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: stories.length,
             physics: BouncingScrollPhysics(),
             itemBuilder: (BuildContext context, int index) {
               return Container(
-                height: 50,
-                color: Colors.red,
+                color: Colors.black,
                 child: Column(
                   children: [
-                    Text(stories[index].text),
-                    StoryCircle(seen: stories[index].seen,)
+                    StoryCircle(
+                      seen: stories[index].seen,
+                    ),
+                    Text(stories[index].text, style: TextStyle(color: Colors.white),)
                   ],
                 ),
               );
@@ -59,5 +57,5 @@ class Story {
   bool seen;
   String text;
 
-Story({required this.seen,this.text='de'});
+  Story({required this.seen, this.text = 'de'});
 }

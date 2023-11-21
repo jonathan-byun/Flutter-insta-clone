@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class photoCard extends StatefulWidget {
-  List images;
-  photoCard({super.key, required this.images});
+class PhotoCard extends StatefulWidget {
+  final List images;
+  PhotoCard({super.key, required this.images});
 
   @override
-  State<photoCard> createState() => _photoCardState();
+  State<PhotoCard> createState() => _PhotoCardState();
 }
 
-class _photoCardState extends State<photoCard> {
+class _PhotoCardState extends State<PhotoCard> {
   int currentIndex = 0;
 
   void setIndex(int index) {
@@ -24,49 +24,62 @@ class _photoCardState extends State<photoCard> {
       color: Colors.black,
       child: Column(
         children: [
-          SizedBox(
-            height: 5,
-          ),
           UserLine(),
-          SizedBox(
-            height: 5,
-          ),
           Carousel(
             images: widget.images,
             setIndex: setIndex,
           ),
-          Row(
-            
-            children: [
-              Row(
-                children: [
-                  IconButton(
-                      onPressed: () {},
-                      icon: const FaIcon(FontAwesomeIcons.heart)),
-                  IconButton(
-                      onPressed: () {},
-                      icon: const FaIcon(FontAwesomeIcons.comment)),
-                  IconButton(
-                      onPressed: () {},
-                      icon: const FaIcon(FontAwesomeIcons.share))
-                ],
-              ),
-              Spacer(),
-              Row(
-                children: indicators(widget.images.length, currentIndex),
-              ),
-              Spacer(flex: 3,),
-              IconButton(onPressed: (){}, icon: FaIcon(FontAwesomeIcons.ribbon))
-            ],
-          )
+          ButtonRow(widget: widget, currentIndex: currentIndex)
         ],
       ),
     );
   }
 }
 
+class ButtonRow extends StatelessWidget {
+  const ButtonRow({
+    super.key,
+    required this.widget,
+    required this.currentIndex,
+  });
+
+  final PhotoCard widget;
+  final int currentIndex;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Row(
+          children: [
+            IconButton(
+                onPressed: () {},
+                icon: const FaIcon(FontAwesomeIcons.heart)),
+            IconButton(
+                onPressed: () {},
+                icon: const FaIcon(FontAwesomeIcons.comment)),
+            IconButton(
+                onPressed: () {},
+                icon: const FaIcon(FontAwesomeIcons.share))
+          ],
+        ),
+        Spacer(),
+        Row(
+          children: indicators(widget.images.length, currentIndex),
+        ),
+        Spacer(
+          flex: 3,
+        ),
+        IconButton(
+            onPressed: () {}, icon: FaIcon(FontAwesomeIcons.ribbon))
+      ],
+    );
+  }
+}
+
 List<Widget> indicators(imagesLength, currentIndex) {
   return List<Widget>.generate(imagesLength, (index) {
+    if (imagesLength > 3) {}
     return Container(
       margin: EdgeInsets.all(3),
       width: 10,
@@ -111,17 +124,23 @@ class UserLine extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        CircleAvatar(
-          backgroundImage: NetworkImage(
-              'https://as1.ftcdn.net/v2/jpg/01/64/39/38/1000_F_164393848_zicOt3rQZDL5TaUCMUombhF8MHH5hRiW.jpg'),
-        ),
-        Text(
-          'data',
-          style: TextStyle(color: Colors.white),
-        ),
-      ],
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 10),
+      child: Row(
+        children: [
+          CircleAvatar(
+            backgroundImage: NetworkImage(
+                'https://as1.ftcdn.net/v2/jpg/01/64/39/38/1000_F_164393848_zicOt3rQZDL5TaUCMUombhF8MHH5hRiW.jpg'),
+          ),
+          SizedBox(
+            width: 10,
+          ),
+          Text(
+            'data',
+            style: TextStyle(color: Colors.white),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_1/appbar.dart';
 import 'package:flutter_1/photocard.dart';
 import 'package:flutter_1/storybar.dart';
+import 'package:flutter_1/widgets/bottom-navbar.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -14,45 +16,31 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
   final String title = 'Instaclone';
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       body: CustomScrollView(
           physics: const BouncingScrollPhysics(
               parent: AlwaysScrollableScrollPhysics()),
           slivers: <Widget>[
             HomePageAppBar(title: title),
             StoryBar(),
-            SliverToBoxAdapter(
-                child: ElevatedButton(
-                    onPressed: () {
-                      FirebaseAuth.instance.signOut();
-                    },
-                    child: Text('hi'))),
             SliverList.builder(
               itemCount: 1,
               itemBuilder: (BuildContext context, int index) {
-                return photoCard(images: [
-              'https://as1.ftcdn.net/v2/jpg/01/64/39/38/1000_F_164393848_zicOt3rQZDL5TaUCMUombhF8MHH5hRiW.jpg',
-              'https://as1.ftcdn.net/v2/jpg/01/64/39/38/1000_F_164393848_zicOt3rQZDL5TaUCMUombhF8MHH5hRiW.jpg',
-            ],);
-              }
-              ),
+                return PhotoCard(
+                  images: [
+                    'https://as1.ftcdn.net/v2/jpg/01/64/39/38/1000_F_164393848_zicOt3rQZDL5TaUCMUombhF8MHH5hRiW.jpg',
+                    'https://as1.ftcdn.net/v2/jpg/01/64/39/38/1000_F_164393848_zicOt3rQZDL5TaUCMUombhF8MHH5hRiW.jpg',
+                  ],
+                );
+              },
+            ),
           ]),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+          bottomNavigationBar: BottomNavBar(),
     );
   }
 }
