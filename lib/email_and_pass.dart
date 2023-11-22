@@ -60,11 +60,14 @@ class EmailField extends StatelessWidget {
   }
 }
 
-class PasswordField extends StatelessWidget {
+class TextInputField extends StatelessWidget {
   final TextEditingController textEditingController;
   final String? error;
-  const PasswordField(
-      {super.key, required this.textEditingController, this.error});
+  final bool isPassword;
+  final String hintText;
+  final TextInputType keyboardType;
+  const TextInputField(
+      {super.key, required this.textEditingController, this.error, required this.isPassword, required this.hintText, required this.keyboardType});
 
   @override
   Widget build(BuildContext context) {
@@ -74,10 +77,10 @@ class PasswordField extends StatelessWidget {
       margin: EdgeInsets.symmetric(vertical: 5),
       child: TextFormField(
         controller: textEditingController,
-        obscureText: true,
-        keyboardType: TextInputType.text,
+        obscureText: isPassword,
+        keyboardType: keyboardType,
         decoration: InputDecoration(
-            hintText: 'Password',
+            hintText: hintText,
             filled: true,
             fillColor: Colors.white,
             errorText: error,

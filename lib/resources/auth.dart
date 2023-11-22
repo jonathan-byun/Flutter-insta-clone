@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_1/models/user.dart';
+
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -24,16 +26,14 @@ class AuthService {
   Future<String?> createUserWithEmailAndPassword({
     required String email,
     required String password,
+    required String username
   }) async {
     String res = 'Error occured';
+    
     try {
       UserCredential cred = await _auth.createUserWithEmailAndPassword(email: email, password: password);
-        await _firestore.collection('users').doc(cred.user!.uid).set({
-          'uid': cred.user!.uid,
-          'email': email,
-          'followers': [],
-          'following': []
-        });
+      ModelUser user = ModelUser(email: email, uid: cred.user!.uid, followers: [], following: [], username: username);
+        await _firestore.collection('users').doc(cred.user!.uid).set(user.toJson());
         res = 'Success';
     } on FirebaseAuthException catch (e) {
       res = e.message.toString();

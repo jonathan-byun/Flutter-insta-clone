@@ -60,11 +60,22 @@ class _MyAppState extends State<MyApp> {
       home: StreamBuilder<User?>(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.active) {
+            if (snapshot.hasError) {
+            return Center(child: Text('${snapshot.error}'),);
+          }
           if (snapshot.hasData) {
             return MyHomePage(title: 'Home Page');
-          } else {
-            return LoginPage();
           }
+          }
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(
+                color: Colors.white,
+              ),
+            );
+          }
+          return LoginPage();
         },
       ),
     );
@@ -161,13 +172,13 @@ class _LoginFormState extends State<LoginForm> {
             children: [
               const Logintext(),
               FillerSpace(height: 30),
-              EmailField(
-                textEditingController: _userEmailController,
-                error: emailError,
-              ),
-              PasswordField(
+              TextInputField(textEditingController: _userEmailController, isPassword: false, hintText: 'Email', keyboardType: TextInputType.emailAddress),
+              TextInputField(
                 textEditingController: _userPasswordController,
                 error: passwordError,
+                isPassword: true,
+                hintText: 'Password',
+                keyboardType: TextInputType.text,
               ),
               ForgotPasswordButton(),
               FillerSpace(height: 20),
