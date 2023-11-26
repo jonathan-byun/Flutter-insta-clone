@@ -2,8 +2,8 @@ import "package:flutter/material.dart";
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class BottomNavBar extends StatefulWidget {
-  
-  BottomNavBar({super.key});
+  Function indexCallback;
+  BottomNavBar({super.key,required this.indexCallback});
 
   @override
   State<BottomNavBar> createState() => _BottomNavBarState();
@@ -17,10 +17,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
   Widget build(BuildContext context) {
     return(
       NavigationBar(
-        onDestinationSelected: (int index) {
-          setState(() {
-            currentIndex=index;
-          });
+        onDestinationSelected: (int newIndex) {
+          widget.indexCallback(newIndex);
         },
         backgroundColor: Colors.black,
         labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
@@ -32,31 +30,5 @@ class _BottomNavBarState extends State<BottomNavBar> {
           NavigationDestination(icon: FaIcon(FontAwesomeIcons.squarePlus), selectedIcon: FaIcon(FontAwesomeIcons.squarePlus, color: Colors.white,), label: 'post'),
       ],)
     );
-    // return BottomNavigationBar(
-    //   showSelectedLabels: false,
-    //   showUnselectedLabels: false,
-    //   backgroundColor: Colors.black,
-    //   items: <BottomNavigationBarItem>[
-    //     BottomNavigationBarItem(
-    //       icon: FaIcon(
-    //         FontAwesomeIcons.house,
-    //         color: navButtonColor,
-    //       ),
-    //       label: 'Home',
-    //     ),
-    //     BottomNavigationBarItem(
-    //         icon: FaIcon(
-    //           FontAwesomeIcons.magnifyingGlass,
-    //           color: navButtonColor,
-    //         ),
-    //         label: 'Explore'),
-    //     BottomNavigationBarItem(
-    //         icon: FaIcon(
-    //           FontAwesomeIcons.squarePlus,
-    //           color: navButtonColor,
-    //         ),
-    //         label: 'Post'),
-    //   ],
-    // );
   }
 }

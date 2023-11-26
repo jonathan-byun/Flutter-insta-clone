@@ -54,7 +54,7 @@ class _MyAppState extends State<MyApp> {
       ),
       routes: <String, WidgetBuilder>{
         '/login': (BuildContext context) => const LoginPage(),
-        '/home': (BuildContext context) => const MyHomePage(title: 'Home Page'),
+        '/home': (BuildContext context) => const MyHomePage(),
         '/signup': (BuildContext context) => SignUpPage()
       },
       home: StreamBuilder<User?>(
@@ -65,7 +65,7 @@ class _MyAppState extends State<MyApp> {
             return Center(child: Text('${snapshot.error}'),);
           }
           if (snapshot.hasData) {
-            return MyHomePage(title: 'Home Page');
+            return MyHomePage();
           }
           }
           if (snapshot.connectionState == ConnectionState.waiting) {
