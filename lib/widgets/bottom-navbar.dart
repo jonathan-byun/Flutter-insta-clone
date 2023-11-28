@@ -1,9 +1,11 @@
 import "package:flutter/material.dart";
+import 'package:flutter_1/widgets/nav-destination.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class BottomNavBar extends StatefulWidget {
   Function indexCallback;
-  BottomNavBar({super.key,required this.indexCallback});
+  int index;
+  BottomNavBar({super.key, required this.indexCallback, required this.index});
 
   @override
   State<BottomNavBar> createState() => _BottomNavBarState();
@@ -11,24 +13,23 @@ class BottomNavBar extends StatefulWidget {
 
 class _BottomNavBarState extends State<BottomNavBar> {
   Color navButtonColor = Colors.white;
-  int currentIndex=0;
 
   @override
   Widget build(BuildContext context) {
-    return(
-      NavigationBar(
-        onDestinationSelected: (int newIndex) {
-          widget.indexCallback(newIndex);
-        },
-        backgroundColor: Colors.black,
-        labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
-        indicatorColor: Colors.transparent,
-        selectedIndex: currentIndex,
-        destinations:<Widget> [
-          NavigationDestination(icon: FaIcon(FontAwesomeIcons.house), selectedIcon: FaIcon(FontAwesomeIcons.house,color: Colors.white,), label: 'home'),
-          NavigationDestination(icon: FaIcon(FontAwesomeIcons.magnifyingGlass),selectedIcon: FaIcon(FontAwesomeIcons.magnifyingGlass, color: Colors.white,), label: 'explore'),
-          NavigationDestination(icon: FaIcon(FontAwesomeIcons.squarePlus), selectedIcon: FaIcon(FontAwesomeIcons.squarePlus, color: Colors.white,), label: 'post'),
-      ],)
-    );
+    return (NavigationBar(
+      onDestinationSelected: (int newIndex) {
+        widget.indexCallback(newIndex);
+      },
+      backgroundColor: Colors.black,
+      labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
+      indicatorColor: Colors.transparent,
+      selectedIndex: widget.index,
+      destinations: const <Widget>[
+        NavigatorPageOption(icon: FontAwesomeIcons.house, label: 'home'),
+        NavigatorPageOption(
+            icon: FontAwesomeIcons.magnifyingGlass, label: 'explore'),
+        NavigatorPageOption(icon: FontAwesomeIcons.squarePlus, label: 'post'),
+      ],
+    ));
   }
 }

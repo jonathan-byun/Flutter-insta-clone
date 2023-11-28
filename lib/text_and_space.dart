@@ -17,22 +17,6 @@ class Logintext extends StatelessWidget {
   }
 }
 
-class FillerSpace extends StatelessWidget {
-  final double height;
-
-  const FillerSpace({
-    super.key,
-    required this.height,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: height,
-    );
-  }
-}
-
 class OrDivider extends StatelessWidget {
   final double width;
   const OrDivider({

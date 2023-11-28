@@ -85,7 +85,7 @@ class _SignUpFormState extends State<SignUpForm> {
           child: Column(
             children: [
               const Logintext(),
-              const FillerSpace(height: 30),
+              const SizedBox(height: 30),
               TextInputField(
                 textEditingController: _emailController,
                 isPassword: false,
