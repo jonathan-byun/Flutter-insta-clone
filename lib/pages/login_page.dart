@@ -1,7 +1,7 @@
 import "package:flutter/material.dart";
 import "package:flutter_1/email_and_pass.dart";
 import "package:flutter_1/resources/auth.dart";
-import "package:flutter_1/signup.dart";
+import 'package:flutter_1/pages/signup.dart';
 import "package:flutter_1/text_and_space.dart";
 import "package:font_awesome_flutter/font_awesome_flutter.dart";
 

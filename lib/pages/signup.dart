@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_1/resources/auth.dart';
 import 'package:flutter_1/email_and_pass.dart';
-import 'text_and_space.dart';
+import '../text_and_space.dart';
 
 class SignUpPage extends StatelessWidget {
   SignUpPage({super.key});

@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_1/providers/user_provider.dart';
 import 'package:flutter_1/resources/auth.dart';
 import 'package:flutter_1/email_and_pass.dart';
-import 'package:flutter_1/homepage.dart';
+import 'package:flutter_1/pages/homepage.dart';
 import 'package:flutter_1/responsive/mobile_screen_layout.dart';
 import 'package:flutter_1/responsive/responsive_layout_screen.dart';
 import 'package:flutter_1/responsive/web_screen_layout.dart';
-import 'package:flutter_1/signup.dart';
+import 'package:flutter_1/pages/signup.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter_1/widgets/login_page.dart';
+import 'package:flutter_1/pages/login_page.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -40,8 +40,7 @@ class _MyAppState extends State<MyApp> {
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        theme: ThemeData.dark().copyWith(
           textTheme: TextTheme(
               displayLarge: TextStyle(
                   fontFamily: GoogleFonts.dancingScript().fontFamily,
@@ -60,7 +59,6 @@ class _MyAppState extends State<MyApp> {
             ),
           ),
           iconTheme: IconThemeData(color: Colors.white),
-          useMaterial3: true,
         ),
         routes: <String, WidgetBuilder>{
           '/login': (BuildContext context) => const LoginPage(),
