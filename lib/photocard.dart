@@ -1,9 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_1/models/user.dart';
+import 'package:flutter_1/providers/user_provider.dart';
+import 'package:flutter_1/widgets/like_animation.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class PhotoCard extends StatefulWidget {
-  final List images;
-  PhotoCard({super.key, required this.images});
+  final Map<String, dynamic> snap;
+  PhotoCard({super.key, required this.snap});
 
   @override
   State<PhotoCard> createState() => _PhotoCardState();
@@ -11,6 +18,7 @@ class PhotoCard extends StatefulWidget {
 
 class _PhotoCardState extends State<PhotoCard> {
   int currentIndex = 0;
+  bool isLikeAnimating = false;
 
   void setIndex(int index) {
     setState(() {
@@ -20,31 +28,165 @@ class _PhotoCardState extends State<PhotoCard> {
 
   @override
   Widget build(BuildContext context) {
+    final ModelUser? user = Provider.of<UserProvider>(context).getUser;
     return Container(
+      padding: EdgeInsets.symmetric(vertical: 6),
       color: Colors.black,
       child: Column(
         children: [
-          UserLine(),
-          Carousel(
-            images: widget.images,
-            setIndex: setIndex,
+          UserLine(
+            profileImage: widget.snap['profImage'],
+            username: widget.snap['username'],
           ),
-          ButtonRow(widget: widget, currentIndex: currentIndex)
+          GestureDetector(
+            onDoubleTap: () {
+              setState(() {
+                isLikeAnimating = true;
+              });
+            },
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Carousel(
+                  images: widget.snap['postUrls'],
+                  setIndex: setIndex,
+                ),
+                AnimatedOpacity(
+                  duration: const Duration(milliseconds: 200),
+                  opacity: isLikeAnimating ? 1 : 0,
+                  child: LikeAnimation(
+                    child: const Icon(
+                      Icons.favorite,
+                      color: Colors.red,
+                      size: 150,
+                    ),
+                    isAnimating: isLikeAnimating,
+                    duration: const Duration(milliseconds: 400),
+                    onEnd: () {
+                      setState(() {
+                        isLikeAnimating = false;
+                      });
+                    },
+                  ),
+                )
+              ],
+            ),
+          ),
+          ButtonRow(
+            numberOfPhotos: widget.snap['postUrls'].length,
+            currentIndex: currentIndex,
+            likes: widget.snap['likes'],
+            uid: user?.uid,
+          ),
+          Likes(
+            likes: widget.snap['likes'],
+          ),
+          Caption(
+            username: widget.snap['username'],
+            caption: widget.snap['description'],
+          ),
+          Comments(),
+          Date(
+            date: widget.snap['datePublished'],
+          ),
         ],
       ),
     );
   }
 }
 
-class ButtonRow extends StatelessWidget {
-  const ButtonRow({
+class Date extends StatelessWidget {
+  final Timestamp date;
+  const Date({super.key, required this.date});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: MediaQuery.sizeOf(context).width,
+      padding: EdgeInsets.only(left: 16, top: 4),
+      child: Text(
+        DateFormat.yMMMd().format(date.toDate()),
+        style: TextStyle(color: Colors.grey),
+      ),
+    );
+  }
+}
+
+class Comments extends StatelessWidget {
+  const Comments({
     super.key,
-    required this.widget,
-    required this.currentIndex,
   });
 
-  final PhotoCard widget;
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {},
+      child: Container(
+        width: MediaQuery.sizeOf(context).width,
+        padding: EdgeInsets.only(left: 16, top: 4),
+        child: Text(
+          'View all 200 comments',
+          style: TextStyle(color: Colors.grey),
+        ),
+      ),
+    );
+  }
+}
+
+class Caption extends StatelessWidget {
+  final String username;
+  final String caption;
+  const Caption({super.key, required this.username, required this.caption});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.only(left: 16),
+      width: double.infinity,
+      child: RichText(
+          text: TextSpan(
+              style: TextStyle(fontWeight: FontWeight.bold),
+              children: [
+            TextSpan(text: username),
+            TextSpan(
+                text: ' ${caption}',
+                style: TextStyle(fontWeight: FontWeight.normal))
+          ])),
+    );
+  }
+}
+
+class Likes extends StatelessWidget {
+  final List likes;
+  const Likes({super.key, required this.likes});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: MediaQuery.sizeOf(context).width,
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text(
+          '${likes.length} likes',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+      ]),
+    );
+  }
+}
+
+class ButtonRow extends StatelessWidget {
+  const ButtonRow(
+      {super.key,
+      required this.numberOfPhotos,
+      required this.currentIndex,
+      required this.likes,
+      required this.uid});
+
+  final int numberOfPhotos;
   final int currentIndex;
+  final List likes;
+  final uid;
 
   @override
   Widget build(BuildContext context) {
@@ -52,32 +194,32 @@ class ButtonRow extends StatelessWidget {
       children: [
         Row(
           children: [
+            LikeAnimation(
+              isAnimating: likes.contains(uid),
+              smallLike: true,
+              child: IconButton(
+                  onPressed: () {}, icon: const FaIcon(FontAwesomeIcons.heart)),
+            ),
             IconButton(
-                onPressed: () {},
-                icon: const FaIcon(FontAwesomeIcons.heart)),
+                onPressed: () {}, icon: const FaIcon(FontAwesomeIcons.comment)),
             IconButton(
-                onPressed: () {},
-                icon: const FaIcon(FontAwesomeIcons.comment)),
-            IconButton(
-                onPressed: () {},
-                icon: const FaIcon(FontAwesomeIcons.share))
+                onPressed: () {}, icon: const FaIcon(FontAwesomeIcons.share))
           ],
         ),
         Spacer(),
         Row(
-          children: indicators(widget.images.length, currentIndex),
+          children: indicators(numberOfPhotos, currentIndex),
         ),
         Spacer(
           flex: 3,
         ),
-        IconButton(
-            onPressed: () {}, icon: FaIcon(FontAwesomeIcons.ribbon))
+        IconButton(onPressed: () {}, icon: FaIcon(FontAwesomeIcons.ribbon))
       ],
     );
   }
 }
 
-List<Widget> indicators(imagesLength, currentIndex) {
+List<Widget> indicators(int imagesLength, int currentIndex) {
   return List<Widget>.generate(imagesLength, (index) {
     if (imagesLength > 3) {}
     return Container(
@@ -118,27 +260,53 @@ class Carousel extends StatelessWidget {
 }
 
 class UserLine extends StatelessWidget {
-  const UserLine({
-    super.key,
-  });
+  final profileImage;
+  final username;
+  const UserLine(
+      {super.key, required this.profileImage, required this.username});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 10),
+      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
       child: Row(
         children: [
           CircleAvatar(
-            backgroundImage: NetworkImage(
-                'https://as1.ftcdn.net/v2/jpg/01/64/39/38/1000_F_164393848_zicOt3rQZDL5TaUCMUombhF8MHH5hRiW.jpg'),
+            radius: 16,
+            backgroundImage: NetworkImage(profileImage),
           ),
           SizedBox(
             width: 10,
           ),
-          Text(
-            'data',
-            style: TextStyle(color: Colors.white),
+          Expanded(
+            child: Text(
+              username,
+              style: TextStyle(color: Colors.white),
+            ),
           ),
+          IconButton(
+            icon: Icon(Icons.more_vert),
+            onPressed: () {
+              showDialog(
+                  context: context,
+                  builder: (context) => Dialog(
+                        child: ListView(
+                          padding: EdgeInsets.symmetric(vertical: 16),
+                          shrinkWrap: true,
+                          children: ['Delete']
+                              .map((e) => InkWell(
+                                    onTap: () {},
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 12, horizontal: 16),
+                                      child: Text(e),
+                                    ),
+                                  ))
+                              .toList(),
+                        ),
+                      ));
+            },
+          )
         ],
       ),
     );

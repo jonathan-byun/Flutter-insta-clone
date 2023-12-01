@@ -15,7 +15,7 @@ class PostPage extends StatefulWidget {
 }
 
 class _PostPageState extends State<PostPage> {
-  File? _file;
+  List<File>? _file;
   final TextEditingController _captionController = TextEditingController();
   bool _isLoading = false;
 
@@ -56,7 +56,6 @@ class _PostPageState extends State<PostPage> {
         showSnackBar(res, context);
       }
     } catch (e) {
-      print('haosehoiasehfioaehiofh');
       showSnackBar(e.toString(), context);
     }
   }
@@ -77,7 +76,7 @@ class _PostPageState extends State<PostPage> {
                   if (xFile != null) {
                     File file = File(xFile.path);
                     setState(() {
-                      _file = file;
+                      _file = [file];
                     });
                   }
                 },
@@ -87,11 +86,14 @@ class _PostPageState extends State<PostPage> {
                 child: const Text('Choose from Gallery'),
                 onPressed: () async {
                   Navigator.of(context).pop();
-                  XFile? xFile = await pickImage(ImageSource.gallery);
+                  List <XFile>? xFile = await pickMultipleImages();
                   if (xFile != null) {
-                    File file = File(xFile.path);
+                    List<File> listOfFiles = [];
+                    for (int i=0;i<xFile.length;i++) {
+                      listOfFiles.add(File(xFile[i].path));
+                    }
                     setState(() {
-                      _file = file;
+                      _file = listOfFiles;
                     });
                   }
                 },
@@ -180,7 +182,7 @@ class _PostPageState extends State<PostPage> {
                       child: Container(
                         decoration: BoxDecoration(
                             image: DecorationImage(
-                                image: FileImage(_file!),
+                                image: FileImage(_file![0]),
                                 fit: BoxFit.fill,
                                 alignment: FractionalOffset.topCenter)),
                       ),

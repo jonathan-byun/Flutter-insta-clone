@@ -9,6 +9,16 @@ pickImage(ImageSource source) async {
   }
 }
 
+pickMultipleImages() async {
+  final ImagePicker _imagePicker = ImagePicker();
+  List<XFile>? _file = await _imagePicker.pickMultiImage(
+    imageQuality: 100,
+  );
+  if (_file != null) {
+    return _file;
+  }
+}
+
 showSnackBar(String content, BuildContext context) {
   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(content)));
 }

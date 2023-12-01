@@ -8,7 +8,7 @@ class ModelPost {
   final String postId;
   final DateTime datePublished;
   final String profImage;
-  final String postUrl;
+  final List <String> postUrls;
   final likes;
 
 
@@ -19,7 +19,7 @@ class ModelPost {
     required this.postId,
     required this.datePublished,
     required this.profImage,
-    required this.postUrl,
+    required this.postUrls,
     required this.likes
   });
 
@@ -30,7 +30,7 @@ class ModelPost {
     "postId": postId,
     "datePublished": datePublished,
     "profImage": profImage,
-    "postUrl":postUrl,
+    "postUrls":postUrls,
     "likes": likes
   };
 
@@ -43,7 +43,7 @@ class ModelPost {
       postId: snapshot['postId'],
       datePublished: snapshot['datePublished'],
       profImage: snapshot['profImage'],
-      postUrl: snapshot['postUrl'],
+      postUrls: snapshot['postUrls'],
       likes: snapshot['likes']
       );
     
