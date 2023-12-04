@@ -34,12 +34,13 @@ class _MyHomePageState extends State<MyHomePage> {
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .get();
     setState(() {
-      username = (snap.data() as Map<String,dynamic>)['username'];
+      username = (snap.data() as Map<String, dynamic>)['username'];
     });
   }
+
   void setIndex(int newIndex) {
     setState(() {
-      currentIndex=newIndex;
+      currentIndex = newIndex;
     });
   }
 
@@ -49,7 +50,8 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       backgroundColor: Colors.black,
       body: homescreenItems[currentIndex],
-          bottomNavigationBar: BottomNavBar(indexCallback: setIndex,index: currentIndex),
+      bottomNavigationBar:
+          BottomNavBar(indexCallback: setIndex, index: currentIndex),
     );
   }
 }

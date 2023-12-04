@@ -3,6 +3,7 @@ import "package:flutter/material.dart";
 import 'package:flutter_1/appbar.dart';
 import 'package:flutter_1/photocard.dart';
 import 'package:flutter_1/storybar.dart';
+import 'package:flutter_1/widgets/comment_sheet.dart';
 
 class FeedPage extends StatefulWidget {
   const FeedPage({super.key});
@@ -22,25 +23,30 @@ class _FeedPageState extends State<FeedPage> {
             AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting ||
               !snapshot.hasData) {
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
           }
-          return CustomScrollView(
-              physics: const BouncingScrollPhysics(
-                  parent: AlwaysScrollableScrollPhysics()),
-              slivers: <Widget>[
-                HomePageAppBar(title: title),
-                StoryBar(),
-                SliverList.builder(
-                  itemCount: snapshot.data!.docs.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return PhotoCard(
-                      snap: snapshot.data!.docs[index].data(),
-                    );
-                  },
-                ),
-              ]);
+          return Stack(
+            children: [
+              CustomScrollView(
+                  physics: const BouncingScrollPhysics(
+                      parent: AlwaysScrollableScrollPhysics()),
+                  slivers: <Widget>[
+                    HomePageAppBar(title: title),
+                    StoryBar(),
+                    SliverList.builder(
+                      itemCount: snapshot.data!.docs.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return PhotoCard(
+                          snap: snapshot.data!.docs[index].data(),
+                        );
+                      },
+                    ),
+                  ]),
+            CommentSheet()
+            ],
+          );
         },
       ),
     ));

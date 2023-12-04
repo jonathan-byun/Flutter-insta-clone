@@ -3,10 +3,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_1/models/user.dart';
 import 'package:flutter_1/providers/user_provider.dart';
+import 'package:flutter_1/resources/firestore_methods.dart';
 import 'package:flutter_1/widgets/like_animation.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+
+import 'widgets/comment_sheet.dart';
 
 class PhotoCard extends StatefulWidget {
   final Map<String, dynamic> snap;
@@ -26,6 +29,14 @@ class _PhotoCardState extends State<PhotoCard> {
     });
   }
 
+  likePost(user) async {
+    await FireStoreMethods()
+        .likePost(widget.snap['postId'], user?.uid, widget.snap['likes']);
+    setState(() {
+      isLikeAnimating = true;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final ModelUser? user = Provider.of<UserProvider>(context).getUser;
@@ -39,11 +50,7 @@ class _PhotoCardState extends State<PhotoCard> {
             username: widget.snap['username'],
           ),
           GestureDetector(
-            onDoubleTap: () {
-              setState(() {
-                isLikeAnimating = true;
-              });
-            },
+            onDoubleTap: () => likePost(user),
             child: Stack(
               alignment: Alignment.center,
               children: [
@@ -76,7 +83,8 @@ class _PhotoCardState extends State<PhotoCard> {
             numberOfPhotos: widget.snap['postUrls'].length,
             currentIndex: currentIndex,
             likes: widget.snap['likes'],
-            uid: user?.uid,
+            user: user,
+            likePost: () => likePost(user),
           ),
           Likes(
             likes: widget.snap['likes'],
@@ -176,17 +184,19 @@ class Likes extends StatelessWidget {
 }
 
 class ButtonRow extends StatelessWidget {
-  const ButtonRow(
+  ButtonRow(
       {super.key,
       required this.numberOfPhotos,
       required this.currentIndex,
       required this.likes,
-      required this.uid});
+      required this.user,
+      required this.likePost});
 
   final int numberOfPhotos;
   final int currentIndex;
   final List likes;
-  final uid;
+  final ModelUser? user;
+  final VoidCallback likePost;
 
   @override
   Widget build(BuildContext context) {
@@ -195,13 +205,20 @@ class ButtonRow extends StatelessWidget {
         Row(
           children: [
             LikeAnimation(
-              isAnimating: likes.contains(uid),
+              isAnimating: likes.contains(user?.uid),
               smallLike: true,
               child: IconButton(
-                  onPressed: () {}, icon: const FaIcon(FontAwesomeIcons.heart)),
+                  onPressed: likePost,
+                  icon: likes.contains(user?.uid)
+                      ? const FaIcon(
+                          FontAwesomeIcons.solidHeart,
+                          color: Colors.red,
+                        )
+                      : const FaIcon(FontAwesomeIcons.heart)),
             ),
             IconButton(
-                onPressed: () {}, icon: const FaIcon(FontAwesomeIcons.comment)),
+                onPressed: () {},
+                icon: const FaIcon(FontAwesomeIcons.comment)),
             IconButton(
                 onPressed: () {}, icon: const FaIcon(FontAwesomeIcons.share))
           ],
