@@ -85,6 +85,7 @@ class _PhotoCardState extends State<PhotoCard> {
             likes: widget.snap['likes'],
             user: user,
             likePost: () => likePost(user),
+          
           ),
           Likes(
             likes: widget.snap['likes'],
@@ -190,7 +191,8 @@ class ButtonRow extends StatelessWidget {
       required this.currentIndex,
       required this.likes,
       required this.user,
-      required this.likePost});
+      required this.likePost,
+      });
 
   final int numberOfPhotos;
   final int currentIndex;
@@ -217,7 +219,7 @@ class ButtonRow extends StatelessWidget {
                       : const FaIcon(FontAwesomeIcons.heart)),
             ),
             IconButton(
-                onPressed: () {},
+                onPressed: (){},
                 icon: const FaIcon(FontAwesomeIcons.comment)),
             IconButton(
                 onPressed: () {}, icon: const FaIcon(FontAwesomeIcons.share))

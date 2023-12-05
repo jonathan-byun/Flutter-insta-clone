@@ -47,11 +47,13 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     ModelUser? user = Provider.of<UserProvider>(context).getUser;
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: homescreenItems[currentIndex],
-      bottomNavigationBar:
-          BottomNavBar(indexCallback: setIndex, index: currentIndex),
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        body: homescreenItems[currentIndex],
+        bottomNavigationBar:
+            BottomNavBar(indexCallback: setIndex, index: currentIndex),
+      ),
     );
   }
 }
