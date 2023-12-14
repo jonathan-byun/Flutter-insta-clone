@@ -1,12 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_1/models/user.dart';
 import 'package:flutter_1/photocard.dart';
+import 'package:flutter_1/providers/user_provider.dart';
 import 'package:flutter_1/resources/firestore_methods.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 
 class CommentSheet extends StatefulWidget {
-  CommentSheet({super.key, required this.profilePic});
-  String profilePic;
+  CommentSheet({super.key, required this.snap});
+  final Map<String, dynamic> snap;
 
   @override
   State<CommentSheet> createState() => _CommentSheetState();
@@ -51,49 +54,9 @@ class _CommentSheetState extends State<CommentSheet> {
               child: Column(
                 children: [
                   CommentsHeader(),
-                  Expanded(
-                    child: CustomScrollView(
-                      controller: _controller,
-                      slivers: [
-                        SliverList.builder(
-                          itemBuilder: (BuildContext context, int index) {
-                            return Padding(
-                              padding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    margin: EdgeInsets.symmetric(horizontal: 10),
-                                    child: CircleAvatar(
-                                      backgroundImage: NetworkImage(
-                                          'https://www.wbfarmstore.net/wp-content/uploads/2014/11/Straw.jpg'),
-                                    ),
-                                  ),
-                                  Expanded(
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Text('username', style: TextStyle(fontWeight: FontWeight.bold),),
-                                          SizedBox(width: 5,),
-                                          Text('12 seconds')
-                                        ],
-                                      ),
-                                      Text('comment text')
-                                    ],
-                                  )),
-                                  IconButton(onPressed: (){}, icon: FaIcon(FontAwesomeIcons.heart, size: 15,))
-                                ],
-                              ),
-                            );
-                          },
-                          itemCount: 10,
-                        ),
-                      ],
-                    ),
-                  ),
+                  Comments(controller: _controller,),
                   CommentBox(
-                    profilePic: widget.profilePic,
+                    snap: widget.snap,
                   )
                 ],
               ),
@@ -103,9 +66,76 @@ class _CommentSheetState extends State<CommentSheet> {
   }
 }
 
+class Comments extends StatelessWidget {
+  const Comments({
+    super.key,
+    required this.controller
+  });
+  final ScrollController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: CustomScrollView(
+        controller: controller,
+        slivers: [
+          SliverList.builder(
+            itemBuilder: (BuildContext context, int index) {
+              return Padding(
+                padding: EdgeInsets.symmetric(
+                    vertical: 5, horizontal: 5),
+                child: Row(
+                  children: [
+                    Container(
+                      margin:
+                          EdgeInsets.symmetric(horizontal: 10),
+                      child: CircleAvatar(
+                        backgroundImage: NetworkImage(
+                            'https://www.wbfarmstore.net/wp-content/uploads/2014/11/Straw.jpg'),
+                      ),
+                    ),
+                    Expanded(
+                        child: Column(
+                      crossAxisAlignment:
+                          CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              'username',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            Text('12 seconds')
+                          ],
+                        ),
+                        Text('comment text')
+                      ],
+                    )),
+                    IconButton(
+                        onPressed: () {},
+                        icon: FaIcon(
+                          FontAwesomeIcons.heart,
+                          size: 15,
+                        ))
+                  ],
+                ),
+              );
+            },
+            itemCount: 10,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class CommentBox extends StatefulWidget {
-  const CommentBox({super.key, required this.profilePic});
-  final String profilePic;
+  const CommentBox({super.key, required this.snap});
+  final Map<String, dynamic> snap;
 
   @override
   State<CommentBox> createState() => _CommentBoxState();
@@ -127,17 +157,26 @@ class _CommentBoxState extends State<CommentBox> {
     super.dispose();
   }
 
-  postComment(String text,String postId, String name, String uid, String profilePic) {
+  postComment(
+      String text, String postId, String name, String uid, String profilePic) {
     FireStoreMethods().commentPost(text, postId, uid, name, profilePic);
   }
 
   @override
   Widget build(BuildContext context) {
+    final ModelUser? user = Provider.of<UserProvider>(context).getUser;
+    if (user == null) {
+      return const Center(
+        child: CircularProgressIndicator(
+          color: Colors.white,
+        ),
+      );
+    }
     return Row(
       children: [
         CircleAvatar(
           radius: 18,
-          backgroundImage: NetworkImage(widget.profilePic),
+          backgroundImage: NetworkImage(user?.photoUrl),
         ),
         Expanded(
           child: ConstrainedBox(
@@ -151,7 +190,21 @@ class _CommentBoxState extends State<CommentBox> {
             ),
           ),
         ),
-        IconButton(onPressed: () {}, icon: FaIcon(FontAwesomeIcons.addressBook))
+        IconButton(
+            onPressed: () async{
+              String res= await FireStoreMethods().commentPost(
+                  _controller.text,
+                  widget.snap['postId'],
+                  user.uid,
+                  user.username,
+                  user.photoUrl);
+              if (res=='success') {
+                _controller.clear();
+              } else {
+                _controller.text=res;
+              }
+            },
+            icon: FaIcon(FontAwesomeIcons.arrowUp))
       ],
     );
   }

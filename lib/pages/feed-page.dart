@@ -14,6 +14,7 @@ class FeedPage extends StatefulWidget {
 
 class _FeedPageState extends State<FeedPage> {
   final String title = 'Instaclone';
+  final Stream<QuerySnapshot<Map<String, dynamic>>> postStream=FirebaseFirestore.instance.collection('posts').snapshots();
   late final ScrollController scrollController;
   @override
   void initState() {
@@ -33,7 +34,7 @@ class _FeedPageState extends State<FeedPage> {
     return (Scaffold(
       resizeToAvoidBottomInset: true,
       body: StreamBuilder(
-        stream: FirebaseFirestore.instance.collection('posts').snapshots(),
+        stream: postStream,
         builder: (context,
             AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting ||

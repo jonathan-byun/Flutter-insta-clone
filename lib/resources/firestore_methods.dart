@@ -51,17 +51,18 @@ class FireStoreMethods {
     }
   }
 
-  Future<void> commentPost(String text, String postId, String uid, String name, String profilePic) async{
+  Future<String> commentPost(String text, String postId, String uid, String name, String profilePic) async{
     try {
       if (text.isNotEmpty) {
         String commentId = const Uuid().v1();
         ModelComment comment = ModelComment(text: text, uid: uid, postId: postId, name: name, profilePic: profilePic);
         await _firestore.collection('posts').doc(postId).collection('comments').doc(commentId).set(comment.toJson());
+        return 'success';
       } else {
-        print('Comment is empty');
+        return 'empty comment';
       }
     } catch(e) {
-      print(e.toString());
+      return e.toString();
     }
   }
 }

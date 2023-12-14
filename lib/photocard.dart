@@ -80,9 +80,8 @@ class _PhotoCardState extends State<PhotoCard> {
             ),
           ),
           ButtonRow(
-            numberOfPhotos: widget.snap['postUrls'].length,
             currentIndex: currentIndex,
-            likes: widget.snap['likes'],
+            snap:widget.snap,
             user: user,
             likePost: () => likePost(user),
           ),
@@ -186,21 +185,21 @@ class Likes extends StatelessWidget {
 class ButtonRow extends StatelessWidget {
   ButtonRow({
     super.key,
-    required this.numberOfPhotos,
     required this.currentIndex,
-    required this.likes,
     required this.user,
     required this.likePost,
+    required this.snap,
   });
-
-  final int numberOfPhotos;
+final Map<String,dynamic> snap;
   final int currentIndex;
-  final List likes;
   final ModelUser? user;
   final VoidCallback likePost;
+  
 
   @override
   Widget build(BuildContext context) {
+    List likes=snap['likes'];
+    int numberOfPhotos = snap['postUrls'].length;
     return Row(
       children: [
         Row(
@@ -225,7 +224,7 @@ class ButtonRow extends StatelessWidget {
                       isDismissible: true,
                       enableDrag: true,
                       builder: (BuildContext context) {
-                        return Padding(padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom), child: CommentSheet(profilePic: user?.photoUrl,));
+                        return Padding(padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom), child: CommentSheet(snap: snap,));
                       });
                 },
                 icon: const FaIcon(FontAwesomeIcons.comment)),
