@@ -54,7 +54,10 @@ class _CommentSheetState extends State<CommentSheet> {
               child: Column(
                 children: [
                   CommentsHeader(),
-                  Comments(controller: _controller,),
+                  Comments(
+                    controller: _controller,
+                    postId: widget.snap['postId'],
+                  ),
                   CommentBox(
                     snap: widget.snap,
                   )
@@ -67,69 +70,80 @@ class _CommentSheetState extends State<CommentSheet> {
 }
 
 class Comments extends StatelessWidget {
-  const Comments({
-    super.key,
-    required this.controller
-  });
+  const Comments({super.key, required this.controller, required this.postId});
   final ScrollController controller;
+  final String postId;
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: CustomScrollView(
-        controller: controller,
-        slivers: [
-          SliverList.builder(
-            itemBuilder: (BuildContext context, int index) {
-              return Padding(
-                padding: EdgeInsets.symmetric(
-                    vertical: 5, horizontal: 5),
-                child: Row(
-                  children: [
-                    Container(
-                      margin:
-                          EdgeInsets.symmetric(horizontal: 10),
-                      child: CircleAvatar(
-                        backgroundImage: NetworkImage(
-                            'https://www.wbfarmstore.net/wp-content/uploads/2014/11/Straw.jpg'),
+    return StreamBuilder(
+        stream: FirebaseFirestore.instance
+            .collection('posts')
+            .doc(postId)
+            .collection('comments')
+            .snapshots(),
+        builder: (context,
+            AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting ||
+              !snapshot.hasData) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          return Expanded(
+            child: CustomScrollView(
+              controller: controller,
+              slivers: [
+                SliverList.builder(
+                  itemBuilder: (BuildContext context, int index) {
+                    Map<String, dynamic> snap=snapshot.data!.docs[index].data();
+                    return Padding(
+                      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                      child: Row(
+                        children: [
+                          Container(
+                            margin: EdgeInsets.symmetric(horizontal: 10),
+                            child: CircleAvatar(
+                              backgroundImage: NetworkImage(
+                                  snap['profilePic']),
+                            ),
+                          ),
+                          Expanded(
+                              child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    snap['name'],
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  Text('12 seconds')
+                                ],
+                              ),
+                              Text(snap['text'])
+                            ],
+                          )),
+                          IconButton(
+                              onPressed: () {},
+                              icon: FaIcon(
+                                FontAwesomeIcons.heart,
+                                size: 15,
+                              ))
+                        ],
                       ),
-                    ),
-                    Expanded(
-                        child: Column(
-                      crossAxisAlignment:
-                          CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              'username',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            Text('12 seconds')
-                          ],
-                        ),
-                        Text('comment text')
-                      ],
-                    )),
-                    IconButton(
-                        onPressed: () {},
-                        icon: FaIcon(
-                          FontAwesomeIcons.heart,
-                          size: 15,
-                        ))
-                  ],
+                    );
+                  },
+                  itemCount: snapshot.data!.docs.length
                 ),
-              );
-            },
-            itemCount: 10,
-          ),
-        ],
-      ),
-    );
+              ],
+            ),
+          );
+        });
   }
 }
 
@@ -191,17 +205,17 @@ class _CommentBoxState extends State<CommentBox> {
           ),
         ),
         IconButton(
-            onPressed: () async{
-              String res= await FireStoreMethods().commentPost(
+            onPressed: () async {
+              String res = await FireStoreMethods().commentPost(
                   _controller.text,
                   widget.snap['postId'],
                   user.uid,
                   user.username,
                   user.photoUrl);
-              if (res=='success') {
+              if (res == 'success') {
                 _controller.clear();
               } else {
-                _controller.text=res;
+                _controller.text = res;
               }
             },
             icon: FaIcon(FontAwesomeIcons.arrowUp))
