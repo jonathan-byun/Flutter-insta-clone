@@ -14,38 +14,24 @@ class FeedPage extends StatefulWidget {
 
 class _FeedPageState extends State<FeedPage> {
   final String title = 'Instaclone';
-  late final DraggableScrollableController _dragController;
   late final ScrollController scrollController;
-  bool commentsOpen = false;
   @override
   void initState() {
-    _dragController = DraggableScrollableController();
     scrollController = ScrollController(keepScrollOffset: true);
     super.initState();
   }
 
   @override
   void dispose() {
-    _dragController.dispose();
     scrollController.dispose();
     super.dispose();
   }
 
-  void openComments() {
-    animatedOpen();
-  }
-
-  void animatedHide() {
-    _dragController.animateTo(0, duration: const Duration(milliseconds: 200),curve: Curves.linear);
-  }
-
-  void animatedOpen() {
-    _dragController.animateTo(.9, duration: const Duration(milliseconds: 200), curve: Curves.linear);
-  }
 
   @override
   Widget build(BuildContext context) {
     return (Scaffold(
+      resizeToAvoidBottomInset: true,
       body: StreamBuilder(
         stream: FirebaseFirestore.instance.collection('posts').snapshots(),
         builder: (context,
@@ -56,39 +42,23 @@ class _FeedPageState extends State<FeedPage> {
               child: CircularProgressIndicator(),
             );
           }
-          return Stack(
-            children: [
-              CustomScrollView(
-                controller: scrollController,
-                  physics: const BouncingScrollPhysics(
-                      parent: AlwaysScrollableScrollPhysics()),
-                  slivers: <Widget>[
-                    HomePageAppBar(title: title),
-                    
-                    StoryBar(),
-                    SliverList.builder(
-                      itemCount: snapshot.data!.docs.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return PhotoCard(
-                          snap: snapshot.data!.docs[index].data(), 
-                        );
-                      },
-                    ),SliverToBoxAdapter(child: ElevatedButton(child: Text('d'),
-                      onPressed:()=> setState(() {
-                      commentsOpen=true;
-                    }),),),
-                  ]),
-            commentsOpen ?
-            NotificationListener<DraggableScrollableNotification>(
-              onNotification: (event){
-                if (event.extent<0.2) {
-                  animatedHide();
-                } 
-                return true;
-              },
-              child: CommentSheet(dragController: _dragController,))
-            : Container()]
-          );
+          return CustomScrollView(
+            controller: scrollController,
+              physics: const BouncingScrollPhysics(
+                  parent: AlwaysScrollableScrollPhysics()),
+              slivers: <Widget>[
+                HomePageAppBar(title: title),
+                
+                StoryBar(),
+                SliverList.builder(
+                  itemCount: snapshot.data!.docs.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return PhotoCard(
+                      snap: snapshot.data!.docs[index].data(), 
+                    );
+                  },
+                ),
+              ]);
         },
       ),
     ));

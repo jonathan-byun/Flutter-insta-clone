@@ -85,7 +85,6 @@ class _PhotoCardState extends State<PhotoCard> {
             likes: widget.snap['likes'],
             user: user,
             likePost: () => likePost(user),
-          
           ),
           Likes(
             likes: widget.snap['likes'],
@@ -185,14 +184,14 @@ class Likes extends StatelessWidget {
 }
 
 class ButtonRow extends StatelessWidget {
-  ButtonRow(
-      {super.key,
-      required this.numberOfPhotos,
-      required this.currentIndex,
-      required this.likes,
-      required this.user,
-      required this.likePost,
-      });
+  ButtonRow({
+    super.key,
+    required this.numberOfPhotos,
+    required this.currentIndex,
+    required this.likes,
+    required this.user,
+    required this.likePost,
+  });
 
   final int numberOfPhotos;
   final int currentIndex;
@@ -219,7 +218,16 @@ class ButtonRow extends StatelessWidget {
                       : const FaIcon(FontAwesomeIcons.heart)),
             ),
             IconButton(
-                onPressed: (){},
+                onPressed: () {
+                  showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      isDismissible: true,
+                      enableDrag: true,
+                      builder: (BuildContext context) {
+                        return Padding(padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom), child: CommentSheet(profilePic: user?.photoUrl,));
+                      });
+                },
                 icon: const FaIcon(FontAwesomeIcons.comment)),
             IconButton(
                 onPressed: () {}, icon: const FaIcon(FontAwesomeIcons.share))

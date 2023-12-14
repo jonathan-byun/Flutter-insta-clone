@@ -1,13 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_1/photocard.dart';
+import 'package:flutter_1/resources/firestore_methods.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class CommentSheet extends StatefulWidget {
-  const CommentSheet({
-    super.key,
-    required this.dragController
-  });
-
-final DraggableScrollableController dragController;
+  CommentSheet({super.key, required this.profilePic});
+  String profilePic;
 
   @override
   State<CommentSheet> createState() => _CommentSheetState();
@@ -15,48 +14,146 @@ final DraggableScrollableController dragController;
 
 class _CommentSheetState extends State<CommentSheet> {
   late final ScrollController _controller;
+  late final DraggableScrollableController _dragController;
   final minExtent = 0.2;
 
   @override
   void initState() {
     super.initState();
     _controller = ScrollController();
+    _dragController = DraggableScrollableController();
   }
 
   @override
   void dispose() {
     super.dispose();
     _controller.dispose();
+    _dragController.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return DraggableScrollableSheet(
         initialChildSize: .9,
-        snapSizes: [.6, .9],
+        snapSizes: const [.6, .9],
         snap: true,
-        minChildSize:0,
+        minChildSize: 0.3,
+        maxChildSize: .9,
         shouldCloseOnMinExtent: true,
-        controller: widget.dragController,
+        expand: false,
+        controller: _dragController,
         builder: (BuildContext context, ScrollController _controller) {
-          return 
-          Container(
-            color: Colors.grey,
-            transformAlignment: Alignment.bottomCenter,
-            child: CustomScrollView(
-              controller: _controller,
-              slivers: [
-                const CommentsHeader(),
-                SliverList.builder(
-                  itemBuilder: (BuildContext context, int index) {
-                    return Container(child:const Text('data'));
-                  },
-                  itemCount: 2,
-                )
-              ],
+          return SafeArea(
+            child: GestureDetector(
+              onTap: () {
+                FocusScope.of(context).unfocus();
+              },
+              child: Column(
+                children: [
+                  CommentsHeader(),
+                  Expanded(
+                    child: CustomScrollView(
+                      controller: _controller,
+                      slivers: [
+                        SliverList.builder(
+                          itemBuilder: (BuildContext context, int index) {
+                            return Padding(
+                              padding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    margin: EdgeInsets.symmetric(horizontal: 10),
+                                    child: CircleAvatar(
+                                      backgroundImage: NetworkImage(
+                                          'https://www.wbfarmstore.net/wp-content/uploads/2014/11/Straw.jpg'),
+                                    ),
+                                  ),
+                                  Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Text('username', style: TextStyle(fontWeight: FontWeight.bold),),
+                                          SizedBox(width: 5,),
+                                          Text('12 seconds')
+                                        ],
+                                      ),
+                                      Text('comment text')
+                                    ],
+                                  )),
+                                  IconButton(onPressed: (){}, icon: FaIcon(FontAwesomeIcons.heart, size: 15,))
+                                ],
+                              ),
+                            );
+                          },
+                          itemCount: 10,
+                        ),
+                      ],
+                    ),
+                  ),
+                  CommentBox(
+                    profilePic: widget.profilePic,
+                  )
+                ],
+              ),
             ),
           );
         });
+  }
+}
+
+class CommentBox extends StatefulWidget {
+  const CommentBox({super.key, required this.profilePic});
+  final String profilePic;
+
+  @override
+  State<CommentBox> createState() => _CommentBoxState();
+}
+
+class _CommentBoxState extends State<CommentBox> {
+  late final TextEditingController _controller;
+  double height = 70;
+
+  @override
+  void initState() {
+    _controller = TextEditingController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  postComment(String text,String postId, String name, String uid, String profilePic) {
+    FireStoreMethods().commentPost(text, postId, uid, name, profilePic);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        CircleAvatar(
+          radius: 18,
+          backgroundImage: NetworkImage(widget.profilePic),
+        ),
+        Expanded(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxHeight: 150,
+            ),
+            child: TextField(
+              maxLines: null,
+              controller: _controller,
+              decoration: InputDecoration(hintText: 'Comment'),
+            ),
+          ),
+        ),
+        IconButton(onPressed: () {}, icon: FaIcon(FontAwesomeIcons.addressBook))
+      ],
+    );
   }
 }
 
@@ -67,29 +164,28 @@ class CommentsHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SliverToBoxAdapter(
-        child: Container(
-            color: const Color.fromARGB(255, 63, 63, 63),
-            child: Center(
-              child: Column(
-                children: [
-                  Container(
-                    width: 40,
-                    height: 5,
-                    margin: const EdgeInsets.symmetric(vertical: 5),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(4),
-                        color: Colors.black),
-                  ),
-                  const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 5),
-                      child: Text(
-                        'Comments',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold),
-                      ))
-                ],
+    return Container(
+        color: const Color.fromARGB(255, 63, 63, 63),
+        height: 50,
+        child: Center(
+          child: Column(
+            children: [
+              Container(
+                width: 40,
+                height: 5,
+                margin: const EdgeInsets.symmetric(vertical: 5),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(4),
+                    color: Colors.black),
               ),
-            )));
+              const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 5),
+                  child: Text(
+                    'Comments',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ))
+            ],
+          ),
+        ));
   }
 }
