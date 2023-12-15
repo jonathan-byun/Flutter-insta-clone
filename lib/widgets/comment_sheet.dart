@@ -5,6 +5,7 @@ import 'package:flutter_1/photocard.dart';
 import 'package:flutter_1/providers/user_provider.dart';
 import 'package:flutter_1/resources/firestore_methods.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/date_time_patterns.dart';
 import 'package:provider/provider.dart';
 
 class CommentSheet extends StatefulWidget {
@@ -74,6 +75,20 @@ class Comments extends StatelessWidget {
   final ScrollController controller;
   final String postId;
 
+  String getDifferenceInTime(DateTime from,DateTime to) {
+    Duration difference = to.difference(from);
+    if (difference.inDays>30) {
+      return '${difference.inDays%30} m';
+    }
+    if (difference.inDays>0) {
+      return '${difference.inDays} d';
+    } if (difference.inHours>0) {
+      return '${difference.inHours} h';
+    } if (difference.inMinutes>0) {
+      return '${difference.inMinutes} m';
+    } return '${difference.inSeconds} s';
+  }
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
@@ -122,7 +137,7 @@ class Comments extends StatelessWidget {
                                   SizedBox(
                                     width: 5,
                                   ),
-                                  Text('12 seconds')
+                                  Text(getDifferenceInTime(snap['time'].toDate(), DateTime.now()))
                                 ],
                               ),
                               Text(snap['text'])

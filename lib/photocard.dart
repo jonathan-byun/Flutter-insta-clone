@@ -92,7 +92,7 @@ class _PhotoCardState extends State<PhotoCard> {
             username: widget.snap['username'],
             caption: widget.snap['description'],
           ),
-          Comments(),
+          
           Date(
             date: widget.snap['datePublished'],
           ),
@@ -114,27 +114,6 @@ class Date extends StatelessWidget {
       child: Text(
         DateFormat.yMMMd().format(date.toDate()),
         style: TextStyle(color: Colors.grey),
-      ),
-    );
-  }
-}
-
-class Comments extends StatelessWidget {
-  const Comments({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {},
-      child: Container(
-        width: MediaQuery.sizeOf(context).width,
-        padding: EdgeInsets.only(left: 16, top: 4),
-        child: Text(
-          'View all 200 comments',
-          style: TextStyle(color: Colors.grey),
-        ),
       ),
     );
   }

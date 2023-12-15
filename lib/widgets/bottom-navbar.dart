@@ -29,6 +29,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
         NavigatorPageOption(
             icon: FontAwesomeIcons.magnifyingGlass, label: 'explore'),
         NavigatorPageOption(icon: FontAwesomeIcons.squarePlus, label: 'post'),
+        NavigatorPageOption(icon: FontAwesomeIcons.user, label: 'profile')
       ],
     ));
   }

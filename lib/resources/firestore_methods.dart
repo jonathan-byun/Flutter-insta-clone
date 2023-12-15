@@ -55,7 +55,7 @@ class FireStoreMethods {
     try {
       if (text.isNotEmpty) {
         String commentId = const Uuid().v1();
-        ModelComment comment = ModelComment(text: text, uid: uid, postId: postId, name: name, profilePic: profilePic);
+        ModelComment comment = ModelComment(text: text, uid: uid, postId: postId, name: name, profilePic: profilePic, time:DateTime.now());
         await _firestore.collection('posts').doc(postId).collection('comments').doc(commentId).set(comment.toJson());
         return 'success';
       } else {
