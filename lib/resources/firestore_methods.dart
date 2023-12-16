@@ -32,6 +32,7 @@ class FireStoreMethods {
           postUrls: photoUrls,
           likes: []);
       await _firestore.collection('posts').doc(postId).set(post.toJson());
+      await _firestore.collection('users').doc(uid).collection('posts').doc(postId).set(post.toJson());
       res='success';
     } catch (e) {
       res=e.toString();

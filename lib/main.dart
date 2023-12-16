@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_1/pages/single-post-view.dart';
 import 'package:flutter_1/providers/user_provider.dart';
 import 'package:flutter_1/resources/auth.dart';
 import 'package:flutter_1/email_and_pass.dart';
