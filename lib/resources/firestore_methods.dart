@@ -32,7 +32,6 @@ class FireStoreMethods {
           postUrls: photoUrls,
           likes: []);
       await _firestore.collection('posts').doc(postId).set(post.toJson());
-      await _firestore.collection('users').doc(uid).collection('posts').doc(postId).set(post.toJson());
       res='success';
     } catch (e) {
       res=e.toString();
@@ -64,6 +63,16 @@ class FireStoreMethods {
       }
     } catch(e) {
       return e.toString();
+    }
+  }
+
+  Future<String> deletePost(String postId) async {
+    print('connect');
+    try{
+      await _firestore.collection('posts').doc(postId).delete();
+      return 'success';
+    } catch(e) {
+      return (e.toString());
     }
   }
 }

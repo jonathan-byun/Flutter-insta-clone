@@ -20,10 +20,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
         body: StreamBuilder(
             stream: FirebaseFirestore.instance
-                .collection('users')
-                .doc(user?.uid)
-                .collection('posts')
-                .snapshots(),
+                .collection('posts').where('uid',isEqualTo: user?.uid).snapshots(),
             builder: (context,
                 AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting ||

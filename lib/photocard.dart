@@ -1,9 +1,12 @@
+
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_1/models/user.dart';
 import 'package:flutter_1/providers/user_provider.dart';
 import 'package:flutter_1/resources/firestore_methods.dart';
+import 'package:flutter_1/utils/utils.dart';
 import 'package:flutter_1/widgets/like_animation.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
@@ -48,6 +51,7 @@ class _PhotoCardState extends State<PhotoCard> {
           UserLine(
             profileImage: widget.snap['profImage'],
             username: widget.snap['username'],
+            postId: widget.snap['postId'],
           ),
           GestureDetector(
             onDoubleTap: () => likePost(user),
@@ -81,7 +85,7 @@ class _PhotoCardState extends State<PhotoCard> {
           ),
           ButtonRow(
             currentIndex: currentIndex,
-            snap:widget.snap,
+            snap: widget.snap,
             user: user,
             likePost: () => likePost(user),
           ),
@@ -92,7 +96,6 @@ class _PhotoCardState extends State<PhotoCard> {
             username: widget.snap['username'],
             caption: widget.snap['description'],
           ),
-          
           Date(
             date: widget.snap['datePublished'],
           ),
@@ -169,15 +172,14 @@ class ButtonRow extends StatelessWidget {
     required this.likePost,
     required this.snap,
   });
-final Map<String,dynamic> snap;
+  final Map<String, dynamic> snap;
   final int currentIndex;
   final ModelUser? user;
   final VoidCallback likePost;
-  
 
   @override
   Widget build(BuildContext context) {
-    List likes=snap['likes'];
+    List likes = snap['likes'];
     int numberOfPhotos = snap['postUrls'].length;
     return Row(
       children: [
@@ -203,7 +205,13 @@ final Map<String,dynamic> snap;
                       isDismissible: true,
                       enableDrag: true,
                       builder: (BuildContext context) {
-                        return Padding(padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom), child: CommentSheet(snap: snap,));
+                        return Padding(
+                            padding: EdgeInsets.only(
+                                bottom:
+                                    MediaQuery.of(context).viewInsets.bottom),
+                            child: CommentSheet(
+                              snap: snap,
+                            ));
                       });
                 },
                 icon: const FaIcon(FontAwesomeIcons.comment)),
@@ -265,10 +273,14 @@ class Carousel extends StatelessWidget {
 }
 
 class UserLine extends StatelessWidget {
-  final profileImage;
-  final username;
+  final String profileImage;
+  final String username;
+  final String postId;
   const UserLine(
-      {super.key, required this.profileImage, required this.username});
+      {super.key,
+      required this.profileImage,
+      required this.username,
+      required this.postId});
 
   @override
   Widget build(BuildContext context) {
@@ -300,7 +312,16 @@ class UserLine extends StatelessWidget {
                           shrinkWrap: true,
                           children: ['Delete']
                               .map((e) => InkWell(
-                                    onTap: () {},
+                                    onTap: () async {
+                                      print('sending');
+                                      String res = await FireStoreMethods()
+                                          .deletePost(postId);
+                                      if (context.mounted) {
+                                        Navigator.of(context).pop();
+                                        if (res != 'success')
+                                          showSnackBar(res, context);
+                                      }
+                                    },
                                     child: Container(
                                       padding: EdgeInsets.symmetric(
                                           vertical: 12, horizontal: 16),
