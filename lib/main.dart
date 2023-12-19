@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_1/pages/single-post-view.dart';
 import 'package:flutter_1/providers/user_provider.dart';
-import 'package:flutter_1/resources/auth.dart';
-import 'package:flutter_1/email_and_pass.dart';
 import 'package:flutter_1/pages/homepage.dart';
-import 'package:flutter_1/responsive/mobile_screen_layout.dart';
 import 'package:flutter_1/responsive/responsive_layout_screen.dart';
 import 'package:flutter_1/responsive/web_screen_layout.dart';
 import 'package:flutter_1/pages/signup.dart';
@@ -13,8 +9,6 @@ import 'package:flutter_1/pages/login_page.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'text_and_space.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 void main() async {

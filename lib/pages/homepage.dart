@@ -1,14 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_1/models/user.dart';
-import 'package:flutter_1/pages/post_page.dart';
-import 'package:flutter_1/providers/user_provider.dart';
 import 'package:flutter_1/utils/globals.dart';
 import 'package:flutter_1/widgets/bottom-navbar.dart';
-import 'package:flutter_1/pages/feed-page.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:provider/provider.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -46,7 +40,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    ModelUser? user = Provider.of<UserProvider>(context).getUser;
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.black,

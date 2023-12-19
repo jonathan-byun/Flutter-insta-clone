@@ -1,11 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_1/models/user.dart';
-import 'package:flutter_1/photocard.dart';
 import 'package:flutter_1/providers/user_provider.dart';
 import 'package:flutter_1/resources/firestore_methods.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:intl/date_time_patterns.dart';
 import 'package:provider/provider.dart';
 
 class CommentSheet extends StatefulWidget {
@@ -205,7 +203,7 @@ class _CommentBoxState extends State<CommentBox> {
       children: [
         CircleAvatar(
           radius: 18,
-          backgroundImage: NetworkImage(user?.photoUrl),
+          backgroundImage: NetworkImage(user.photoUrl),
         ),
         Expanded(
           child: ConstrainedBox(

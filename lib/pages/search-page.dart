@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_1/models/user.dart';
-import 'package:flutter_1/pages/profile-page.dart';
 import 'package:flutter_1/pages/single-post-view.dart';
 import 'package:flutter_1/pages/single-profile-view.dart';
 

@@ -1,7 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_1/models/user.dart';
 
 class AuthService {
@@ -54,7 +52,7 @@ class AuthService {
           .collection('users')
           .doc(cred.user!.uid)
           .set(user.toJson());
-      res = 'Success';
+      res = 'success';
     } on FirebaseAuthException catch (e) {
       res = e.message.toString();
     }

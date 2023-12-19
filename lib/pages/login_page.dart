@@ -73,7 +73,7 @@ class _LoginFormState extends State<LoginForm> {
     String? errorMessage = await AuthService().signInWithEmailAndPassword(
         email: _userEmailController.text,
         password: _userPasswordController.text);
-    if (errorMessage != null || errorMessage != 'Success') {
+    if (errorMessage != 'Success') {
       handleError(errorMessage);
     }
     setState(() {

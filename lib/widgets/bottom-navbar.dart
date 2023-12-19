@@ -3,9 +3,9 @@ import 'package:flutter_1/widgets/nav-destination.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class BottomNavBar extends StatefulWidget {
-  Function indexCallback;
-  int index;
-  BottomNavBar({super.key, required this.indexCallback, required this.index});
+  final Function indexCallback;
+  final int index;
+  const BottomNavBar({super.key, required this.indexCallback, required this.index});
 
   @override
   State<BottomNavBar> createState() => _BottomNavBarState();

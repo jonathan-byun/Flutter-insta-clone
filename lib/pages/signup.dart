@@ -62,7 +62,7 @@ class _SignUpFormState extends State<SignUpForm> {
       password: _passwordController.text,
       username: _usernameController.text
     );
-    if (errorMessage != null) {
+    if (errorMessage != 'success') {
       handleError(errorMessage.toString());
     }
   }

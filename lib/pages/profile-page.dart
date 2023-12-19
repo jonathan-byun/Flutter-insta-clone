@@ -40,7 +40,7 @@ class Profile extends StatelessWidget {
     return StreamBuilder(
         stream: FirebaseFirestore.instance
             .collection('posts')
-            .where('uid', isEqualTo: user?.uid)
+            .where('uid', isEqualTo: user.uid)
             .snapshots(),
         builder: (context,
             AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
@@ -60,7 +60,7 @@ class Profile extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        user!.username,
+                        user.username,
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 25),
                       ),

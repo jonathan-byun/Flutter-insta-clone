@@ -1,9 +1,9 @@
 import "package:flutter/material.dart";
 
-class gradientCircle extends StatelessWidget {
-  gradientCircle({super.key, required this.diameter, required this.seen});
-  double diameter;
-  bool seen;
+class GradientCircle extends StatelessWidget {
+  const GradientCircle({super.key, required this.diameter, required this.seen});
+  final double diameter;
+  final bool seen;
   @override 
   Widget build(BuildContext context) {
     
