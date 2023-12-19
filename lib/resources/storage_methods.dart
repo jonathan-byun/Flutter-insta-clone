@@ -11,9 +11,9 @@ class StorageMethods {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Future<String> uploadImageToStorage(
-      String childName, File file, bool isPost) async {
+      String childName, File file, bool isPost, String postId) async {
     Reference ref =
-        _storage.ref().child(childName).child(_auth.currentUser!.uid);
+        _storage.ref().child(childName).child(_auth.currentUser!.uid).child(postId);
 
     if (isPost) {
       String id = const Uuid().v1();
@@ -24,5 +24,15 @@ class StorageMethods {
     TaskSnapshot snap = await uploadTask;
     String downloadUrl = await snap.ref.getDownloadURL();
     return downloadUrl;
+  }
+
+  Future<String> deleteImageFromStorage(childName,postId) async {
+    Reference ref = _storage.ref().child(childName).child(_auth.currentUser!.uid).child(postId);
+    try {
+      await ref.delete();
+      return 'success';
+    } catch (e) {
+      return e.toString();
+    }
   }
 }

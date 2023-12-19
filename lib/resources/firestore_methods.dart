@@ -1,4 +1,7 @@
+import "dart:ffi";
+
 import "package:cloud_firestore/cloud_firestore.dart";
+import "package:firebase_auth/firebase_auth.dart";
 import "package:firebase_storage/firebase_storage.dart";
 import "package:flutter_1/models/comments.dart";
 import "package:flutter_1/models/post.dart";
@@ -12,16 +15,17 @@ class FireStoreMethods {
   Future<String> uploadPost(List<File> files, String caption, String uid,
       String username, String profImage) async {
     String res = 'Some error occured';
+    String postId = const Uuid().v1();
     try {
       List <String>photoUrls = [];
       for (var i=0;i<files.length; i++) {
         File file = files[i];
          String photoUrl =
-          await StorageMethods().uploadImageToStorage('posts', file, true);
+          await StorageMethods().uploadImageToStorage('posts', file, true,postId);
         photoUrls.add(photoUrl);
       }
      
-      String postId = const Uuid().v1();
+      
       ModelPost post = ModelPost(
           description: caption,
           uid: uid,
@@ -37,6 +41,27 @@ class FireStoreMethods {
       res=e.toString();
     }
     return res;
+  }
+
+  Future<void> updateProfile(File? file, String? bio)async {
+    String uid=FirebaseAuth.instance.currentUser!.uid;
+    if (file!=null) {
+      try {   
+      Reference ref= FirebaseStorage.instance.ref('profile').child(uid);
+      TaskSnapshot snap= await ref.putFile(file);
+      String url = await snap.ref.getDownloadURL();
+      await _firestore.collection('users').doc(uid).update({'photoUrl':url});
+      } catch (e) {
+        print(e);
+      }
+    }
+    if (bio!=null) {
+      try{
+        await _firestore.collection('users').doc(uid).update({'bio':bio});
+      } catch(e) {
+        print(e);
+      }
+    }
   }
 
   Future<void> likePost(String postId, String uid, List likes) async {
@@ -67,8 +92,8 @@ class FireStoreMethods {
   }
 
   Future<String> deletePost(String postId) async {
-    print('connect');
     try{
+      await StorageMethods().deleteImageFromStorage('posts', postId);
       await _firestore.collection('posts').doc(postId).delete();
       return 'success';
     } catch(e) {

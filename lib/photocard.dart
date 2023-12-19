@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_1/models/user.dart';
+import 'package:flutter_1/pages/single-profile-view.dart';
 import 'package:flutter_1/providers/user_provider.dart';
 import 'package:flutter_1/resources/firestore_methods.dart';
 import 'package:flutter_1/utils/utils.dart';
@@ -52,6 +53,7 @@ class _PhotoCardState extends State<PhotoCard> {
             profileImage: widget.snap['profImage'],
             username: widget.snap['username'],
             postId: widget.snap['postId'],
+            postUid: widget.snap['uid']
           ),
           GestureDetector(
             onDoubleTap: () => likePost(user),
@@ -276,11 +278,13 @@ class UserLine extends StatelessWidget {
   final String profileImage;
   final String username;
   final String postId;
+  final String postUid;
   const UserLine(
       {super.key,
       required this.profileImage,
       required this.username,
-      required this.postId});
+      required this.postId,
+      required this.postUid});
 
   @override
   Widget build(BuildContext context) {
@@ -288,9 +292,15 @@ class UserLine extends StatelessWidget {
       margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
       child: Row(
         children: [
-          CircleAvatar(
-            radius: 16,
-            backgroundImage: NetworkImage(profileImage),
+          GestureDetector(
+            onTap: ()async{
+              ModelUser selectedUser= ModelUser.fromSnap(await FirebaseFirestore.instance.collection('users').doc(postUid).get()); 
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>SingleProfile(user: selectedUser)));
+            },
+            child: CircleAvatar(
+              radius: 16,
+              backgroundImage: NetworkImage(profileImage),
+            ),
           ),
           SizedBox(
             width: 10,
